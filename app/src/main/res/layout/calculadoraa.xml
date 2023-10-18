@@ -30,6 +30,7 @@
             android:gravity="end"
             android:inputType="none"
             android:textSize="24sp"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -47,10 +48,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="-39dp">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <View
                 android:layout_width="0dp"
@@ -84,7 +86,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginTop="128dp"
+            android:layout_marginEnd="16dp"
             android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <!-- Botones de números -->
@@ -131,7 +135,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:layout_marginEnd="16dp"
             android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
 
             <!-- Botones de números -->
@@ -178,7 +184,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:layout_marginEnd="16dp"
             android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
 
             <!-- Botones de números -->
@@ -224,7 +232,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:layout_marginEnd="16dp"
             android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
 
             <!-- Botón de borrar -->

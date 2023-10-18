@@ -6,10 +6,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.Stack;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText editText;
-    Button button;
     private boolean lastButtonWasOperator = false;
 
     @Override
@@ -95,42 +96,95 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // Método para evaluar una expresión matemática dada
     private String evaluateExpression(String expression) {
         try {
-            // Divide la expresión en operandos y operadores
-            String[] tokens = expression.split("");
-            if (tokens.length != 3) {
+            // Utiliza una pila para evaluar expresiones más largas
+            String[] tokens = expression.split(" ");
+            Stack<Double> operands = new Stack<>();
+            Stack<String> operators = new Stack<>();
+
+            for (String token : tokens) {
+                if (isNumeric(token)) {
+                    operands.push(Double.parseDouble(token));
+                } else if (isOperator(token)) {
+                    while (!operators.isEmpty() && hasPrecedence(operators.peek(), token)) {
+                        applyOperator(operators.pop(), operands);
+                    }
+                    operators.push(token);
+                }
+            }
+
+            while (!operators.isEmpty()) {
+                applyOperator(operators.pop(), operands);
+            }
+
+            if (operands.size() == 1) {
+                return String.valueOf(operands.pop());
+            } else {
                 return "Error";
             }
-
-            double operand1 = Double.parseDouble(tokens[0]);
-            String operator = tokens[1];
-            double operand2 = Double.parseDouble(tokens[2]);
-
-            // Realiza la operación correspondiente
-            double result = 0.0;
-            switch (operator) {
-                case "+":
-                    result = operand1 + operand2;
-                    break;
-                case "-":
-                    result = operand1 - operand2;
-                    break;
-                case "*":
-                    result = operand1 * operand2;
-                    break;
-                case "/":
-                    if (operand2 != 0) {
-                        result = operand1 / operand2;
-                    } else {
-                        return "Error";
-                    }
-                    break;
-                default:
-                    return "Error";
-            }
-
-            return String.valueOf(result);
         } catch (Exception e) {
             return "Error";
         }
+    }
+
+    // Verifica si un token es un número
+    private boolean isNumeric(String token) {
+        try {
+            Double.parseDouble(token);
+            return true;
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    // Verifica si un token es un operador
+    private boolean isOperator(String token) {
+        return "+".equals(token) || "-".equals(token) || "*".equals(token) || "/".equals(token);
+    }
+
+    // Verifica si el operador1 tiene mayor o igual precedencia que operador2
+    private boolean hasPrecedence(String operator1, String operator2) {
+        int precedence1 = getPrecedence(operator1);
+        int precedence2 = getPrecedence(operator2);
+        return precedence1 >= precedence2;
+    }
+
+    // Determina la precedencia de los operadores
+    private int getPrecedence(String operator) {
+        if ("+".equals(operator) || "-".equals(operator)) {
+            return 1;
+        } else if ("*".equals(operator) || "/".equals(operator)) {
+            return 2;
+        }
+        return 0;
+    }
+
+    // Aplica un operador a los operandos en la pila
+    private void applyOperator(String operator, Stack<Double> operands) {
+        if (operands.size() < 2) {
+            // Manejar el caso de error aquí
+            return;
+        }
+        double operand2 = operands.pop();
+        double operand1 = operands.pop();
+        double result = 0;
+        switch (operator) {
+            case "+":
+                result = operand1 + operand2;
+                break;
+            case "-":
+                result = operand1 - operand2;
+                break;
+            case "*":
+                result = operand1 * operand2;
+                break;
+            case "/":
+                if (operand2 != 0) {
+                    result = operand1 / operand2;
+                } else {
+                    // Manejar la división por cero aquí
+                    return;
+                }
+                break;
+        }
+        operands.push(result);
     }
 }
