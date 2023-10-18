@@ -1,11 +1,17 @@
 package com.example.intents;
+import static android.widget.Toast.LENGTH_SHORT;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 public class intentspagina extends AppCompatActivity {
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,29 +43,32 @@ public class intentspagina extends AppCompatActivity {
         btnImplicit2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Intent implícito para abrir https://moodle.uttcampus.edu.mx/login/index.php
-                Uri webpage = Uri.parse("https://moodle.uttcampus.edu.mx/login/index.php");
-                Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
-                startActivity(intent);
+                String textToShare = "¡Te saludo desde mi aplicación creada en Android Studio!";
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, textToShare);
+                startActivity(Intent.createChooser(shareIntent, "Compartir con"));
             }
         });
-
         btnImplicit3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Intent implícito para abrir https://www.facebook.com/
-                Uri webpage = Uri.parse("https://www.facebook.com/");
-                Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
-                startActivity(intent);
+                // Crear un Intent para seleccionar una imagen
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*"); // Filtrar para que solo se muestren imágenes
+
+                int REQUEST_SELECT_IMAGE = 1;
+                startActivityForResult(intent, REQUEST_SELECT_IMAGE);
             }
         });
+
 
         btnImplicit4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Intent implícito para abrir https://www.google.com/sky/
-                Uri webpage = Uri.parse("https://www.google.com/sky/");
-                Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+                String phoneNumber = "8715653029";
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + phoneNumber));
                 startActivity(intent);
             }
         });
