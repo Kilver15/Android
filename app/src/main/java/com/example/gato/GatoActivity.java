@@ -1,11 +1,16 @@
 package com.example.gato;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Arrays;
 
 public class GatoActivity extends AppCompatActivity {
 
@@ -16,70 +21,94 @@ public class GatoActivity extends AppCompatActivity {
     private int oScore = 0;
     private TextView scoreTextView;
 
+    private static final int[][] WINNING_COMBINATIONS = {
+            {0, 1, 2}, {3, 4, 5}, {6, 7, 8},  // Líneas horizontales
+            {0, 3, 6}, {1, 4, 7}, {2, 5, 8},  // Líneas verticales
+            {0, 4, 8}, {2, 4, 6}              // Líneas diagonales
+    };
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(this, "Debes terminar la partida", Toast.LENGTH_SHORT).show();
+
+        // O simplemente no hacer nada
+        super.onBackPressed();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gatoactivity);
-
-        buttons[0] = findViewById(R.id.button1);
-        buttons[1] = findViewById(R.id.button2);
-        buttons[2] = findViewById(R.id.button3);
-        buttons[3] = findViewById(R.id.button4);
-        buttons[4] = findViewById(R.id.button5);
-        buttons[5] = findViewById(R.id.button6);
-        buttons[6] = findViewById(R.id.button7);
-        buttons[7] = findViewById(R.id.button8);
-        buttons[8] = findViewById(R.id.button9);
-
         scoreTextView = findViewById(R.id.scoreTextView);
+        SharedPreferences prefs = getSharedPreferences("Puntuaciones", MODE_PRIVATE);
+        xScore = prefs.getInt("xScore", 0);
+        oScore = prefs.getInt("oScore", 0);
 
-        for (int i = 0; i < 9; i++) {
-            gameState[i] = 0;
+
+        // Actualizar el marcador en la interfaz de usuario
+        scoreTextView.setText("X - " + xScore + " /// " + oScore + " - O");
+        for (int i = 1; i <= 9; i++) {
+            int resID = getResources().getIdentifier("button" + i, "id", getPackageName());
+            final Button button = findViewById(resID);
+            buttons[i - 1] = button;  // Guardar los botones en un arreglo
+
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String buttonText = button.getText().toString();
+                    if (buttonText.isEmpty()) {
+                        if (playerX) {
+                            button.setText("x");
+                            int buttonPosition = Arrays.asList(buttons).indexOf(button);
+                            gameState[buttonPosition] = 1;  // Marcar la casilla como "x"
+                            playerX = false;
+                        } else {
+                            button.setText("o");
+                            int buttonPosition = Arrays.asList(buttons).indexOf(button);
+                            gameState[buttonPosition] = 2;  // Marcar la casilla como "o"
+                            playerX = true;
+                        }
+
+                        // Verificar si hay un ganador después de cada movimiento
+                        checkForWinner();
+                    }
+                }
+            });
         }
     }
 
-    public void onButtonClick(View view) {
-        Button clickedButton = (Button) view;
-        int tag = Integer.parseInt(clickedButton.getTag().toString());
+    private void checkForWinner() {
+        for (int[] combination : WINNING_COMBINATIONS) {
+            int pos1 = combination[0];
+            int pos2 = combination[1];
+            int pos3 = combination[2];
 
-        if (gameState[tag] == 0) {
-            if (playerX) {
-                clickedButton.setText("X");
-                gameState[tag] = 1;
-            } else {
-                clickedButton.setText("O");
-                gameState[tag] = 2;
-            }
-
-            if (checkForWinner()) {
-                if (playerX) {
+            if (gameState[pos1] == gameState[pos2] && gameState[pos2] == gameState[pos3] && gameState[pos1] != 0) {
+                // Hay un ganador
+                int winner = gameState[pos1];
+                if (winner == 1) {
                     xScore++;
-                    showWinner("X");
                 } else {
                     oScore++;
-                    showWinner("O");
                 }
-                updateScore();
-            } else {
-                playerX = !playerX;
+
+                // Actualizar el marcador en la interfaz de usuario
+                scoreTextView.setText("X - " + xScore + " /// " + oScore + " - O");
+
+                // Guardar el marcador en SharedPreferences
+                SharedPreferences prefs = getSharedPreferences("Puntuaciones", MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putInt("xScore", xScore);
+                editor.putInt("oScore", oScore);
+                editor.apply();
+                Intent intent = new Intent(GatoActivity.this, FinalActivity.class);
+
+                if (winner == 1) {
+                    intent.putExtra("winner", "x");
+                } else {
+                    intent.putExtra("winner", "o");
+                }
+                startActivity(intent);
             }
         }
     }
 
-    private boolean checkForWinner() {
-        // Implementa la lógica para verificar si hay un ganador
-        // Añade tu lógica aquí
-        return false; // Reemplaza esto con tu lógica real
-    }
-
-    private void showWinner(String winner) {
-        // Muestra al ganador en una nueva actividad
-        Intent intent = new Intent(GatoActivity.this, FinalActivity.class);
-        intent.putExtra("winner", winner);
-        startActivity(intent);
-    }
-
-    private void updateScore() {
-        scoreTextView.setText("Marcador: X - " + xScore + " | O - " + oScore);
-    }
 }

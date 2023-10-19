@@ -8,9 +8,8 @@
     android:gravity="center">
 
     <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
         android:rowCount="3"
         android:columnCount="3"
         android:padding="16dp"
@@ -120,7 +119,7 @@
         android:id="@+id/scoreTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Marcador: X - 0 | O - 0"
+
         android:textSize="18sp"
         android:textStyle="bold"
         android:gravity="center"
