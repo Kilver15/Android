@@ -4,6 +4,15 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
-
+    <style name="CalculatorButton" parent="Base.Theme.MyApplication">
+        <!-- Tamaño del texto -->
+        <item name="android:textSize">24sp</item>
+        <!-- Color del texto -->
+        <item name="android:textColor">#FFFFFF</item>
+        <!-- Margen entre los botones -->
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:layout_width">90dp</item>
+        <item name="android:layout_height">90dp</item>
+    </style>
     <style name="Theme.MyApplication" parent="Base.Theme.MyApplication" />
 </resources>
