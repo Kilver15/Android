@@ -5,10 +5,13 @@ public class Celsius extends Grado {
         super(valor, unidad);
     }
 
-    public Fahrenheit parseF(Celsius c){
-        return new Fahrenheit(c.getValor()*1.8+32,"F");
+    public Fahrenheit CtoFahrenheit() {
+        double fahrenheitValue = getValor() * 1.8 + 32;
+        return new Fahrenheit(fahrenheitValue, "F");
     }
-    public  Kelvin parseK(Celsius c){
-        return  new Kelvin(c.getValor() + 273.15, "K");
+
+    public Kelvin CtoKelvin() {
+        double kelvinValue = getValor() + 273.15;
+        return new Kelvin(kelvinValue, "K");
     }
 }
